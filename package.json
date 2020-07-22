@@ -4,7 +4,8 @@
   "description": "sprint-12",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "PORT=3000 nodemon app.js",
+    "start": "PORT=3000 node app.js"
   },
   "keywords": [],
   "author": "Osipenkov Evgenii <osipenkov.evgenii@gmail.com>",
@@ -12,6 +13,10 @@
   "devDependencies": {
     "eslint": "^7.5.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0"
+    "eslint-plugin-import": "^2.22.0",
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }

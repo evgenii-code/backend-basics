@@ -4,7 +4,7 @@ const { linkValidator } = require('../utils');
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
 module.exports.createUser = (req, res) => {
@@ -12,7 +12,7 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => res.status(400).send({ message: err.message }));
 };
 
 module.exports.findUserById = (req, res) => {
@@ -20,7 +20,7 @@ module.exports.findUserById = (req, res) => {
 
   User.findById(userId)
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => res.status(404).send({ message: err.message }));
 };
 
 module.exports.updateProfile = (req, res) => {
@@ -37,7 +37,7 @@ module.exports.updateProfile = (req, res) => {
     { new: true },
   )
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => res.status(400).send({ message: err.message }));
 };
 
 module.exports.updateAvatar = (req, res) => {
@@ -52,5 +52,5 @@ module.exports.updateAvatar = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => res.status(400).send({ message: err.message }));
 };

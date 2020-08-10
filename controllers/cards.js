@@ -16,13 +16,14 @@ module.exports.createCard = (req, res) => {
     .catch((err) => res.status(400).send({ message: err.message }));
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = async (req, res) => {
   const { cardId } = req.params;
 
-  Card.findByIdAndRemove(cardId)
-    .populate('owner')
+  await Card.findByIdAndDelete(cardId)
+    .orFail(() => new Error(`Card with id ${cardId} not found`))
+    .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => res.status(404).send({ message: err.message }));
 };
 
 module.exports.likeCard = (req, res) => {

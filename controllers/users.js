@@ -1,5 +1,4 @@
 const User = require('../models/user');
-const { linkValidator } = require('../utils');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -35,8 +34,9 @@ module.exports.updateProfile = (req, res) => {
   User.findByIdAndUpdate(
     meId,
     update,
-    { new: true },
+    { new: true, runValidators: true },
   )
+    .orFail(() => new Error('Запрашиваемый ресурс не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(400).send({ message: err.message }));
 };
@@ -45,13 +45,12 @@ module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
   const { _id: meId } = req.user;
 
-  User.schema.path('avatar').validate(linkValidator);
-
   User.findByIdAndUpdate(
     meId,
     { $set: { avatar } },
     { new: true, runValidators: true },
   )
+    .orFail(() => new Error('Запрашиваемый ресурс не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(400).send({ message: err.message }));
 };

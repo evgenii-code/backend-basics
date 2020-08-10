@@ -32,9 +32,10 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => new Error('Запрашиваемый ресурс не найден'))
     .populate('likes')
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => res.status(404).send({ message: err.message }));
 };
 
 module.exports.dislikeCard = (req, res) => {
@@ -43,6 +44,8 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => new Error('Запрашиваемый ресурс не найден'))
+    .populate('likes')
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => res.status(404).send({ message: err.message }));
 };

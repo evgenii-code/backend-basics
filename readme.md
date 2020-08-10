@@ -1,20 +1,25 @@
 # **Основы бэкэнда. Спринт 13**
 
-## **Версия** 0.0.3
+## **Версия** 0.0.4
 
 ## **Описание**
-В данной работе выполнены задания по темам "Создание API. REST" и "Базы данных"
+В данной работе выполнены задания по темам:
+- Серверная разработка на Node.js
+- Введение в Express.js
+- Создание API. REST
+- Базы данных
 
 ## **Описание API**
-- запрос `GET /users` возвращает всех пользователей из базы;
-- запрос `GET /users/:userId` возвращает конкретного пользователя;
-- запрос `POST /users` создаёт пользователя;
-- запрос `GET /cards` возвращает все карточки всех пользователей;
-- запрос `POST /cards` создаёт карточку;
-- запрос `PATCH /users/me` обновляет профиль
-- запрос `PATCH /users/me/avatar` обновляет аватар
-- запрос `PUT /cards/:cardId/likes` поставить лайк карточке
-- запрос `DELETE /cards/:cardId/likes` убрать лайк с карточки
+- `GET /users` - возвращает всех пользователей из базы
+- `GET /users/:userId` - возвращает конкретного пользователя
+- `POST /users` - создаёт пользователя
+- `PATCH /users/me` - обновляет профиль
+- `PATCH /users/me/avatar` - обновляет аватар
+- `GET /cards` - возвращает все карточки всех пользователей
+- `POST /cards` - создаёт карточку
+- `DELETE /cards/:cardId` — удаляет карточку по _id
+- `PUT /cards/:cardId/likes` - поставить лайк карточке
+- `DELETE /cards/:cardId/likes` - убрать лайк с карточки
 
 ## **Стэк технологий** 
 - [Node.js](https://nodejs.org/en/)
@@ -22,9 +27,10 @@
 - [MongoDB](https://www.mongodb.com/)
 - [Mongoose](https://mongoosejs.com/)
 - [Nodemon](https://www.npmjs.com/package/nodemon/)
+- [Validator](https://www.npmjs.com/package/validator)
 - [ESLint](https://eslint.org/)
 
 ## **Установка**
 - Скачать репозиторий и установить зависимости - `$ npm install`
 - Запустить сервер на http://localhost:3000 - `$ npm run start`
-- Запустить сервер с "горячей" перезагрузкой: http://localhost:3000 - `$ npm run dev`
+- Запустить сервер с "горячей" перезагрузкой http://localhost:3000 - `$ npm run dev`

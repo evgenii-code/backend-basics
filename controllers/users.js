@@ -19,6 +19,7 @@ module.exports.findUserById = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
+    .orFail(() => new Error('Запрашиваемый ресурс не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(404).send({ message: err.message }));
 };

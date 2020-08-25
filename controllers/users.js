@@ -1,5 +1,8 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+
+const { JWT_SECRET } = process.env;
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -67,4 +70,27 @@ module.exports.updateAvatar = (req, res) => {
     .orFail(() => new Error('Запрашиваемый ресурс не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(400).send({ message: err.message }));
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        JWT_SECRET,
+        { expiresIn: '7d' },
+      );
+
+      res
+        .cookie('jwt', token, {
+          httpOnly: true,
+          sameSite: true,
+        })
+        .end();
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
 };

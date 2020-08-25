@@ -4,8 +4,8 @@
   "description": "sprint-12",
   "main": "index.js",
   "scripts": {
-    "dev": "PORT=3000 nodemon app.js",
-    "start": "PORT=3000 node app.js"
+    "dev": "JWT_SECRET=7922a2fcc99d97f7018788f1e95f24955d042b85f6fb2e0669f3983ea561248c PORT=3000 nodemon app.js",
+    "start": "JWT_SECRET=7922a2fcc99d97f7018788f1e95f24955d042b85f6fb2e0669f3983ea561248c PORT=3000 node app.js"
   },
   "keywords": [],
   "author": "Osipenkov Evgenii <osipenkov.evgenii@gmail.com>",
@@ -20,6 +20,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.27",
     "validator": "^13.1.1"
   }

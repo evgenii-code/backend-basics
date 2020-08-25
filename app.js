@@ -22,19 +22,19 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5f2d1f447828aaec8224695e',
-  };
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: '5f2d1f447828aaec8224695e',
+//   };
 
-  next();
-});
+//   next();
+// });
 
 app.post('/signin', login);
 app.post('/signup', createUser);
 app.use(auth);
-app.use('/', users);
-app.use('/', cards);
+app.use('/users', users);
+app.use('/cards', cards);
 app.use((req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });

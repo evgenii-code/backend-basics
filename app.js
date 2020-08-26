@@ -1,5 +1,6 @@
 const path = require('path');
 const express = require('express');
+const helmet = require("helmet");
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const users = require('./routes/users.js');
@@ -18,17 +19,10 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
-
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '5f2d1f447828aaec8224695e',
-//   };
-
-//   next();
-// });
 
 app.post('/signin', login);
 app.post('/signup', createUser);

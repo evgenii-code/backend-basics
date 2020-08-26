@@ -43,13 +43,12 @@ module.exports.findUserById = (req, res) => {
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
   const update = { $set: {} };
-  const { _id: meId } = req.user;
 
   if (name !== undefined) update.$set.name = name;
   if (about !== undefined) update.$set.about = about;
 
   User.findByIdAndUpdate(
-    meId,
+    req.user._id,
     update,
     { new: true, runValidators: true },
   )
@@ -60,10 +59,9 @@ module.exports.updateProfile = (req, res) => {
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  const { _id: meId } = req.user;
 
   User.findByIdAndUpdate(
-    meId,
+    req.user._id,
     { $set: { avatar } },
     { new: true, runValidators: true },
   )

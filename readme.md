@@ -1,6 +1,6 @@
-# **Основы бэкэнда. Спринт 13**
+# **Основы бэкэнда. Спринт 14**
 
-## **Версия** 0.0.4
+## **Версия** 0.0.5
 
 ## **Описание**
 В данной работе выполнены задания по темам:
@@ -8,6 +8,8 @@
 - Введение в Express.js
 - Создание API. REST
 - Базы данных
+- Аутентификация и авторизация
+- Безопасность веб приложений
 
 ## **Описание API**
 - `GET /users` - возвращает всех пользователей из базы
@@ -28,6 +30,10 @@
 - [Mongoose](https://mongoosejs.com/)
 - [Nodemon](https://www.npmjs.com/package/nodemon/)
 - [Validator](https://www.npmjs.com/package/validator)
+- [bcrypt.js](https://www.npmjs.com/package/bcryptjs)
+- [Express Rate Limit](https://www.npmjs.com/package/express-rate-limit)
+- [Helmet](https://www.npmjs.com/package/helmet)
+- [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
 - [ESLint](https://eslint.org/)
 
 ## **Установка**

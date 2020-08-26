@@ -19,7 +19,7 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
 
-  Card.findByIdAndDelete(cardId)
+  Card.findOneAndDelete({ _id: cardId, owner: req.user._id })
     .orFail(() => new Error('Запрашиваемый ресурс не найден'))
     .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))

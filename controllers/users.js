@@ -1,13 +1,18 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const { defineErrorCode, defineErrorMessage } = require('../utils/utils');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      defineErrorCode(err, res);
+
+      res.send({ message: defineErrorMessage(err, res) });
+    });
 };
 
 module.exports.createUser = (req, res) => {
@@ -18,6 +23,8 @@ module.exports.createUser = (req, res) => {
     email,
     password,
   } = req.body;
+
+  if (!password) res.status(400).send({ message: 'Не передан пароль' });
 
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
@@ -42,12 +49,9 @@ module.exports.createUser = (req, res) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'MongoError' && err.code === 11000) {
-        res.status(409);
-      } else {
-        res.status(400);
-      }
-      res.send({ message: err.message });
+      defineErrorCode(err, res);
+
+      res.send({ message: defineErrorMessage(err, res) });
     });
 };
 
@@ -55,9 +59,13 @@ module.exports.findUserById = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
-    .orFail(() => new Error('Запрашиваемый ресурс не найден'))
+    .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(404).send({ message: err.message }));
+    .catch((err) => {
+      defineErrorCode(err, res);
+
+      res.send({ message: defineErrorMessage(err, res) });
+    });
 };
 
 module.exports.updateProfile = (req, res) => {
@@ -72,9 +80,13 @@ module.exports.updateProfile = (req, res) => {
     update,
     { new: true, runValidators: true },
   )
-    .orFail(() => new Error('Запрашиваемый ресурс не найден'))
+    .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(400).send({ message: err.message }));
+    .catch((err) => {
+      defineErrorCode(err, res);
+
+      res.send({ message: defineErrorMessage(err, res) });
+    });
 };
 
 module.exports.updateAvatar = (req, res) => {
@@ -85,9 +97,13 @@ module.exports.updateAvatar = (req, res) => {
     { $set: { avatar } },
     { new: true, runValidators: true },
   )
-    .orFail(() => new Error('Запрашиваемый ресурс не найден'))
+    .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(400).send({ message: err.message }));
+    .catch((err) => {
+      defineErrorCode(err, res);
+
+      res.send({ message: defineErrorMessage(err, res) });
+    });
 };
 
 module.exports.login = (req, res) => {

@@ -1,10 +1,15 @@
 const Card = require('../models/card');
+const { defineErrorCode, defineErrorMessage } = require('../utils/utils');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      defineErrorCode(err, res);
+
+      res.send({ message: defineErrorMessage(err, res) });
+    });
 };
 
 module.exports.createCard = (req, res) => {
@@ -13,17 +18,25 @@ module.exports.createCard = (req, res) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(400).send({ message: err.message }));
+    .catch((err) => {
+      defineErrorCode(err, res);
+
+      res.send({ message: defineErrorMessage(err, res) });
+    });
 };
 
 module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
 
   Card.findOneAndDelete({ _id: cardId, owner: req.user._id })
-    .orFail(() => new Error('Запрашиваемый ресурс не найден'))
+    .orFail()
     .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(404).send({ message: err.message }));
+    .catch((err) => {
+      defineErrorCode(err, res);
+
+      res.send({ message: defineErrorMessage(err, res) });
+    });
 };
 
 module.exports.likeCard = (req, res) => {
@@ -32,10 +45,14 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => new Error('Запрашиваемый ресурс не найден'))
+    .orFail()
     .populate('likes')
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(404).send({ message: err.message }));
+    .catch((err) => {
+      defineErrorCode(err, res);
+
+      res.send({ message: defineErrorMessage(err, res) });
+    });
 };
 
 module.exports.dislikeCard = (req, res) => {
@@ -44,8 +61,12 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => new Error('Запрашиваемый ресурс не найден'))
+    .orFail()
     .populate('likes')
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(404).send({ message: err.message }));
+    .catch((err) => {
+      defineErrorCode(err, res);
+
+      res.send({ message: defineErrorMessage(err, res) });
+    });
 };

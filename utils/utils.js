@@ -19,8 +19,31 @@ const isJsonString = (str) => {
 
 const rootPath = path.dirname(require.main.filename);
 
+const defineErrorCode = (err, res) => {
+  if (err.name === 'MongoError' && err.code === 11000) return res.status(409);
+  if (err.name === 'ValidationError' || err.name === 'CastError') return res.status(400);
+  if (err.name === 'DocumentNotFoundError') return res.status(404);
+
+  return res.status(500);
+};
+
+const defineErrorMessage = (err, res) => {
+  switch (res.statusCode) {
+    case 404:
+      return 'Запрашиваемый ресурс не найден';
+    case 401:
+      return 'Необходима авторизация';
+    case 500:
+      return 'На сервере произошла ошибка';
+    default:
+      return err.message;
+  }
+};
+
 module.exports = {
   isJsonString,
   rootPath,
   linkValidator,
+  defineErrorCode,
+  defineErrorMessage,
 };

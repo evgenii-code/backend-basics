@@ -1,6 +1,6 @@
 # **Основы бэкэнда. Спринт 14**
 
-## **Версия** 0.0.5
+## **Версия** 0.0.6
 
 ## **Описание**
 В данной работе выполнены задания по темам:
@@ -29,6 +29,7 @@
 - [MongoDB](https://www.mongodb.com/)
 - [Mongoose](https://mongoosejs.com/)
 - [Nodemon](https://www.npmjs.com/package/nodemon/)
+- [dotenv](https://www.npmjs.com/package/dotenv)
 - [Validator](https://www.npmjs.com/package/validator)
 - [bcrypt.js](https://www.npmjs.com/package/bcryptjs)
 - [Express Rate Limit](https://www.npmjs.com/package/express-rate-limit)

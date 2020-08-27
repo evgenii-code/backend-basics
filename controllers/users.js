@@ -41,7 +41,14 @@ module.exports.createUser = (req, res) => {
         },
       });
     })
-    .catch((err) => res.status(400).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'MongoError' && err.code === 11000) {
+        res.status(409);
+      } else {
+        res.status(400);
+      }
+      res.send({ message: err.message });
+    });
 };
 
 module.exports.findUserById = (req, res) => {

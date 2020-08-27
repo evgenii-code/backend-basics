@@ -24,9 +24,9 @@ module.exports.createUser = (req, res) => {
     password,
   } = req.body;
 
-  if (!password) res.status(400).send({ message: 'Не передан пароль' });
+  if (!password) return res.status(400).send({ message: 'Не передан пароль' });
 
-  bcrypt.hash(password, 10)
+  return bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name,
       about,

@@ -33,6 +33,8 @@ const defineErrorMessage = (err, res) => {
       return 'Запрашиваемый ресурс не найден';
     case 401:
       return 'Необходима авторизация';
+    case 409:
+      return 'Данный email уже используется';
     case 500:
       return 'На сервере произошла ошибка';
     default:

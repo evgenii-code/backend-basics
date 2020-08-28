@@ -35,18 +35,7 @@ module.exports.createUser = (req, res) => {
       password: hash,
     }))
     .then((user) => {
-      // const userWithoutPassword = { ...user._doc };
-      // delete userWithoutPassword.password;
-      // res.status(201).send({ data: userWithoutPassword });
-      res.status(201).send({
-        data: {
-          _id: user._id,
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          email: user.email,
-        },
-      });
+      res.status(201).send({ data: user.toJSON() });
     })
     .catch((err) => {
       defineErrorCode(err, res);

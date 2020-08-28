@@ -28,10 +28,17 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
 
-  Card.findOneAndDelete({ _id: cardId, owner: req.user._id })
+  Card.findOne({
+    _id: cardId,
+  })
     .orFail()
     .populate(['owner', 'likes'])
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card.owner._id.toString() !== req.user._id) return res.status(403).send({ message: 'Недостаточно прав' });
+
+      card.deleteOne();
+      return res.send({ data: card });
+    })
     .catch((err) => {
       defineErrorCode(err, res);
 

@@ -35,7 +35,7 @@ module.exports.createUser = (req, res) => {
       password: hash,
     }))
     .then((user) => {
-      res.status(201).send({ data: user.toJSON() });
+      res.status(201).send({ data: user });
     })
     .catch((err) => {
       defineErrorCode(err, res);

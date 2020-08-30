@@ -36,8 +36,15 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => {
       if (card.owner._id.toString() !== req.user._id) return res.status(403).send({ message: 'Недостаточно прав' });
 
-      card.deleteOne();
-      return res.send({ data: card });
+      return card.deleteOne()
+        .then((data) => {
+          res.send({ data });
+        })
+        .catch((err) => {
+          defineErrorCode(err, res);
+
+          res.send({ message: defineErrorMessage(err, res) });
+        });
     })
     .catch((err) => {
       defineErrorCode(err, res);

@@ -1,13 +1,20 @@
-const path = require('path');
 const express = require('express');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const users = require('./routes/users.js');
 const cards = require('./routes/cards.js');
+const { login, createUser } = require('./controllers/users');
+const auth = require('./middlewares/auth');
+require('dotenv').config();
 
 const app = express();
-
 const { PORT = 3000 } = process.env;
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -16,20 +23,16 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use(limiter);
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5f2d1f447828aaec8224695e',
-  };
-
-  next();
-});
-
-app.use('/', users);
-app.use('/', cards);
+app.post('/signin', login);
+app.post('/signup', createUser);
+app.use(auth);
+app.use('/users', users);
+app.use('/cards', cards);
 app.use((req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });

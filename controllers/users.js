@@ -1,21 +1,18 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { defineErrorCode, defineErrorMessage } = require('../utils/utils');
+const { defineError } = require('../utils/utils');
+const ValidationError = require('../errors/validation-err');
 
 const { NODE_ENV = 'development', JWT_SECRET } = process.env;
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      defineErrorCode(err, res);
-
-      res.send({ message: defineErrorMessage(err, res) });
-    });
+    .catch((err) => defineError(err, next));
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name,
     about,
@@ -24,7 +21,7 @@ module.exports.createUser = (req, res) => {
     password,
   } = req.body;
 
-  if (!password) return res.status(400).send({ message: 'Не передан пароль' });
+  if (!password) return next(new ValidationError('Не передан пароль'));
 
   return bcrypt.hash(password, 10)
     .then((hash) => User.create({
@@ -34,30 +31,20 @@ module.exports.createUser = (req, res) => {
       email,
       password: hash,
     }))
-    .then((user) => {
-      res.status(201).send({ data: user });
-    })
-    .catch((err) => {
-      defineErrorCode(err, res);
-
-      res.send({ message: defineErrorMessage(err, res) });
-    });
+    .then((user) => res.status(201).send({ data: user }))
+    .catch((err) => defineError(err, next));
 };
 
-module.exports.findUserById = (req, res) => {
+module.exports.findUserById = (req, res, next) => {
   const { userId } = req.params;
 
-  User.findById(userId)
+  User.findOne({ _id: userId })
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      defineErrorCode(err, res);
-
-      res.send({ message: defineErrorMessage(err, res) });
-    });
+    .catch((err) => defineError(err, next));
 };
 
-module.exports.updateProfile = (req, res) => {
+module.exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;
   const update = { $set: {} };
 
@@ -71,14 +58,10 @@ module.exports.updateProfile = (req, res) => {
   )
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      defineErrorCode(err, res);
-
-      res.send({ message: defineErrorMessage(err, res) });
-    });
+    .catch((err) => defineError(err, next));
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
@@ -88,14 +71,10 @@ module.exports.updateAvatar = (req, res) => {
   )
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      defineErrorCode(err, res);
-
-      res.send({ message: defineErrorMessage(err, res) });
-    });
+    .catch((err) => defineError(err, next));
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findUserByCredentials(email, password)
@@ -113,7 +92,5 @@ module.exports.login = (req, res) => {
         })
         .end();
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+    .catch((err) => defineError(err, next));
 };

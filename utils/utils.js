@@ -1,4 +1,7 @@
 const path = require('path');
+const NotFoundError = require('../errors/not-found-err');
+const ValidationError = require('../errors/validation-err');
+const ConflictError = require('../errors/conflict-err');
 
 const linkRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
 const linkValidator = {
@@ -27,6 +30,15 @@ const defineErrorCode = (err, res) => {
   return res.status(500);
 };
 
+const defineError = (err, next) => {
+  if (err.name === 'MongoError' && err.code === 11000) next(new ConflictError('Пользователь с таким email уже существует'));
+  if (err.name === 'ValidationError') return next(new ValidationError('Ошибка валидации'));
+  if (err.name === 'CastError') return next(new ValidationError('Передан неверный id'));
+  if (err.name === 'DocumentNotFoundError') return next(new NotFoundError('Запрашиваемый ресурс не найден'));
+
+  return next(err);
+};
+
 const defineErrorMessage = (err, res) => {
   switch (res.statusCode) {
     case 404:
@@ -46,6 +58,7 @@ module.exports = {
   isJsonString,
   rootPath,
   linkValidator,
+  defineError,
   defineErrorCode,
   defineErrorMessage,
 };

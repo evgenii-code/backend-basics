@@ -1,7 +1,7 @@
 {
-  "name": "sprint-12",
-  "version": "0.0.8",
-  "description": "sprint-12",
+  "name": "sprint-15",
+  "version": "0.0.9",
+  "description": "Backend basics",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon app.js",

@@ -6,6 +6,7 @@
 Публичный ip [84.201.141.83](84.201.141.83)
 
 Домен [http://api.mesto-app.ga/](http://api.mesto-app.ga/)
+Домен [https://mesto-app.ga/](https://mesto-app.ga/)
 
 ## **Описание**
 В данной работе выполнены задания по темам:

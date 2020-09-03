@@ -4,6 +4,8 @@ const User = require('../models/user');
 const { defineError } = require('../utils/utils');
 const ValidationError = require('../errors/validation-err');
 
+require('dotenv').config();
+
 const { NODE_ENV = 'development', JWT_SECRET } = process.env;
 
 module.exports.getUsers = (req, res, next) => {

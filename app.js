@@ -37,6 +37,11 @@ app.use(bodyParser.json());
 
 app.use(requestLogger);
 
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 app.post('/signin', celebrate(loginSchema), login);
 app.post('/signup', celebrate(createUserSchema), createUser);
 app.use(celebrate(authSchema), auth);

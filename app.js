@@ -3,12 +3,15 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
+const { celebrate } = require('celebrate');
 const users = require('./routes/users.js');
 const cards = require('./routes/cards.js');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-err');
 const errorHandler = require('./middlewares/error');
+const { loginSchema, createUserSchema, authSchema } = require('./utils/validation-schemes');
 
 require('dotenv').config();
 
@@ -31,14 +34,15 @@ app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.post('/signin', login);
-app.post('/signup', createUser);
-app.use(auth);
+app.post('/signin', celebrate(loginSchema), login);
+app.post('/signup', celebrate(createUserSchema), createUser);
+app.use(celebrate(authSchema), auth);
 app.use('/users', users);
 app.use('/cards', cards);
 app.use((req, res, next) => {
   next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {

@@ -1,6 +1,13 @@
-# **Основы бэкэнда. Спринт 14**
+# **Основы бэкэнда. Спринт 15**
 
-## **Версия** 0.0.8
+## **Версия** 0.0.10
+
+## **Превью**
+Публичный ip [84.201.141.83](84.201.141.83)
+
+Домен [http://api.mesto-app.ga/](http://api.mesto-app.ga/)
+
+Домен [https://mesto-app.ga/](https://mesto-app.ga/)
 
 ## **Описание**
 В данной работе выполнены задания по темам:
@@ -10,6 +17,7 @@
 - Базы данных
 - Аутентификация и авторизация
 - Безопасность веб приложений
+- Подготовка и деплой бэкэнда 
 
 ## **Описание API**
 - `GET /users` - возвращает всех пользователей из базы
@@ -35,6 +43,9 @@
 - [Express Rate Limit](https://www.npmjs.com/package/express-rate-limit)
 - [Helmet](https://www.npmjs.com/package/helmet)
 - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+- [celebrate](https://www.npmjs.com/package/celebrate)
+- [winston](https://www.npmjs.com/package/winston)
+- [express-winston](https://www.npmjs.com/package/express-winston)
 - [ESLint](https://eslint.org/)
 
 ## **Установка**

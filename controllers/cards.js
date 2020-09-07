@@ -1,31 +1,24 @@
 const Card = require('../models/card');
-const { defineErrorCode, defineErrorMessage } = require('../utils/utils');
+const { defineError } = require('../utils/utils');
+const ForbiddenError = require('../errors/forbidden-err');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      defineErrorCode(err, res);
-
-      res.send({ message: defineErrorMessage(err, res) });
-    });
+    .catch((err) => defineError(err, next));
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const { _id: owner } = req.user;
 
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      defineErrorCode(err, res);
-
-      res.send({ message: defineErrorMessage(err, res) });
-    });
+    .catch((err) => defineError(err, next));
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
   Card.findOne({
@@ -34,26 +27,18 @@ module.exports.deleteCard = (req, res) => {
     .orFail()
     .populate(['owner', 'likes'])
     .then((card) => {
-      if (card.owner._id.toString() !== req.user._id) return res.status(403).send({ message: 'Недостаточно прав' });
+      if (card.owner._id.toString() !== req.user._id) return next(new ForbiddenError('Недостаточно прав'));
 
       return card.deleteOne()
         .then((data) => {
           res.send({ data });
         })
-        .catch((err) => {
-          defineErrorCode(err, res);
-
-          res.send({ message: defineErrorMessage(err, res) });
-        });
+        .catch((err) => defineError(err, next));
     })
-    .catch((err) => {
-      defineErrorCode(err, res);
-
-      res.send({ message: defineErrorMessage(err, res) });
-    });
+    .catch((err) => defineError(err, next));
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -62,14 +47,10 @@ module.exports.likeCard = (req, res) => {
     .orFail()
     .populate('likes')
     .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      defineErrorCode(err, res);
-
-      res.send({ message: defineErrorMessage(err, res) });
-    });
+    .catch((err) => defineError(err, next));
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -78,9 +59,5 @@ module.exports.dislikeCard = (req, res) => {
     .orFail()
     .populate('likes')
     .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      defineErrorCode(err, res);
-
-      res.send({ message: defineErrorMessage(err, res) });
-    });
+    .catch((err) => defineError(err, next));
 };

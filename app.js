@@ -3,10 +3,17 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
+const { celebrate } = require('celebrate');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const users = require('./routes/users.js');
 const cards = require('./routes/cards.js');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const NotFoundError = require('./errors/not-found-err');
+const errorHandler = require('./middlewares/error');
+const { loginSchema, createUserSchema, authSchema } = require('./utils/validation-schemes');
+
 require('dotenv').config();
 
 const app = express();
@@ -28,14 +35,27 @@ app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.post('/signin', login);
-app.post('/signup', createUser);
-app.use(auth);
+app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+app.post('/signin', celebrate(loginSchema), login);
+app.post('/signup', celebrate(createUserSchema), createUser);
+app.use(celebrate(authSchema), auth);
 app.use('/users', users);
 app.use('/cards', cards);
-app.use((req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+app.use((req, res, next) => {
+  next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });
+
+app.use(errorLogger);
+
+app.use(errors());
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

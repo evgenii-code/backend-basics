@@ -92,8 +92,6 @@ module.exports.login = (req, res, next) => {
         sameSite: true,
       };
 
-      if (NODE_ENV !== 'production') cookieOptions.domain = '';
-
       res
         .cookie('jwt', token, cookieOptions)
         .end();

@@ -41,9 +41,9 @@ app.use(requestLogger);
 
 app.post('/signin', celebrate(loginSchema), login);
 app.post('/signup', celebrate(createUserSchema), createUser);
+app.use('/cards', cards);
 app.use(celebrate(authSchema), auth);
 app.use('/users', users);
-app.use('/cards', cards);
 app.use((req, res, next) => {
   next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });

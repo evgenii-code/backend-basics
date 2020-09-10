@@ -87,11 +87,15 @@ module.exports.login = (req, res, next) => {
         { expiresIn: '7d' },
       );
 
+      const cookieOptions = {
+        httpOnly: true,
+        sameSite: true,
+      };
+
+      if (NODE_ENV !== 'production') cookieOptions.domain = '';
+
       res
-        .cookie('jwt', token, {
-          httpOnly: true,
-          sameSite: true,
-        })
+        .cookie('jwt', token, cookieOptions)
         .end();
     })
     .catch((err) => defineError(err, next));

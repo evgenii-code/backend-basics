@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const { celebrate } = require('celebrate');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const users = require('./routes/users.js');
 const cards = require('./routes/cards.js');
@@ -22,6 +24,10 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
 });
+const corsOptions = {
+  origin: process.env.ALLOWED_CORS.split(' '),
+  credentials: true,
+};
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -32,21 +38,18 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(limiter);
 app.use(helmet());
+app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(requestLogger);
 
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
 app.post('/signin', celebrate(loginSchema), login);
 app.post('/signup', celebrate(createUserSchema), createUser);
+app.use('/cards', cards);
 app.use(celebrate(authSchema), auth);
 app.use('/users', users);
-app.use('/cards', cards);
 app.use((req, res, next) => {
   next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });

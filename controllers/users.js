@@ -14,6 +14,13 @@ module.exports.getUsers = (req, res, next) => {
     .catch((err) => defineError(err, next));
 };
 
+module.exports.getAuthUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .orFail()
+    .then((user) => res.send({ data: user }))
+    .catch((err) => defineError(err, next));
+};
+
 module.exports.createUser = (req, res, next) => {
   const {
     name,

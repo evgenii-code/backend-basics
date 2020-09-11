@@ -19,9 +19,11 @@ module.exports.createUserSchema = {
 };
 
 module.exports.authSchema = {
-  headers: Joi.object().keys({
-    authorization: Joi.string().required(),
-  }).unknown(true),
+  // headers: Joi.object().keys({
+  //   authorization: Joi.string().required(),
+  // }).unknown(true),
+
+  // no validation for cookies
 };
 
 module.exports.findUser = {

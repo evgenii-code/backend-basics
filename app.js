@@ -14,7 +14,11 @@ const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-err');
 const errorHandler = require('./middlewares/error');
-const { loginSchema, createUserSchema, authSchema } = require('./utils/validation-schemes');
+const {
+  loginSchema,
+  createUserSchema,
+  // authSchema, //no joi validation for cookie
+} = require('./utils/validation-schemes');
 
 require('dotenv').config();
 
@@ -48,7 +52,8 @@ app.use(requestLogger);
 app.post('/signin', celebrate(loginSchema), login);
 app.post('/signup', celebrate(createUserSchema), createUser);
 app.use('/cards', cards);
-app.use(celebrate(authSchema), auth);
+// app.use(celebrate(authSchema), auth); // no joi validation for cookie
+app.use(auth);
 app.use('/users', users);
 app.use((req, res, next) => {
   next(new NotFoundError('Запрашиваемый ресурс не найден'));

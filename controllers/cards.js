@@ -10,6 +10,8 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.createCard = (req, res, next) => {
+  console.log(req.file);
+
   const { name, link } = req.body;
   const { _id: owner } = req.user;
 

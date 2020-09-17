@@ -14,3 +14,9 @@ node_modules
 .idea
 .vscode
 .env
+
+# exclude everything in folder 'uploads'
+uploads/*
+
+# exception to the rule
+!uploads/.gitkeep

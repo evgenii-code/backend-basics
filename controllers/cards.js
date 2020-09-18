@@ -1,4 +1,3 @@
-const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 const Card = require('../models/card');
 const { defineError } = require('../utils/utils');
@@ -48,12 +47,7 @@ module.exports.createCardFromFile = (req, res, next) => {
         .then((card) => res.send({ data: card }))
         .catch((err) => defineError(err, next));
     })
-    .catch(() => next(new ServiceUnavailable('Ошибка загрузки файла на Cloudinary')))
-    .finally(() => {
-      fs.unlink(req.file.path, (err) => {
-        if (err) throw err;
-      });
-    });
+    .catch(() => next(new ServiceUnavailable('Ошибка загрузки файла на Cloudinary')));
 };
 
 module.exports.deleteCard = (req, res, next) => {

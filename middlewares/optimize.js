@@ -1,3 +1,4 @@
+const fs = require('fs');
 const tinify = require('tinify');
 const ServiceUnavailable = require('../errors/service-unavailable');
 require('dotenv').config();
@@ -9,5 +10,10 @@ module.exports = (req, res, next) => {
 
   source.toFile(req.file.path)
     .then(() => next())
-    .catch(() => next(new ServiceUnavailable('Ошибка загрузки файла на Tinify')));
+    .catch(() => next(new ServiceUnavailable('Ошибка загрузки файла на Tinify')))
+    .finally(() => {
+      fs.unlink(req.file.path, (err) => {
+        if (err) throw err;
+      });
+    });
 };

@@ -17,9 +17,11 @@ const NotFoundError = require('./errors/not-found-err');
 const errorHandler = require('./middlewares/error');
 const {
   loginSchema,
-  createUserSchema,
+  // createUserSchema,
   // authSchema, //no joi validation for cookie
 } = require('./utils/validation-schemes');
+const { upload } = require('./utils/multer-config');
+const optimize = require('./middlewares/optimize');
 
 require('dotenv').config();
 
@@ -52,7 +54,8 @@ app.use(requestLogger);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.post('/signin', celebrate(loginSchema), login);
-app.post('/signup', celebrate(createUserSchema), createUser);
+// app.post('/signup', celebrate(createUserSchema), createUser); //route for signup with avatar link
+app.post('/signup', upload.single('file'), optimize, createUser);
 app.use('/cards', cards);
 // app.use(celebrate(authSchema), auth); // no joi validation for cookie
 app.use(auth);

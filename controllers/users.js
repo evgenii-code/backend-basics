@@ -1,8 +1,13 @@
+const cloudinary = require('cloudinary').v2;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { defineError } = require('../utils/utils');
 const ValidationError = require('../errors/validation-err');
+const ServiceUnavailable = require('../errors/service-unavailable');
+const { cloudinaryConfig } = require('../utils/cloudinary-config');
+
+cloudinary.config(cloudinaryConfig);
 
 require('dotenv').config();
 
@@ -22,26 +27,29 @@ module.exports.getAuthUser = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const {
-    name,
-    about,
-    avatar,
-    email,
-    password,
-  } = req.body;
+  cloudinary.uploader.upload(req.file.path)
+    .then((result) => {
+      const {
+        name,
+        about,
+        email,
+        password,
+      } = req.body;
 
-  if (!password) return next(new ValidationError('Не передан пароль'));
+      if (!password) return next(new ValidationError('Не передан пароль'));
 
-  return bcrypt.hash(password, 10)
-    .then((hash) => User.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
-    }))
-    .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => defineError(err, next));
+      return bcrypt.hash(password, 10)
+        .then((hash) => User.create({
+          name,
+          about,
+          avatar: result.secure_url,
+          email,
+          password: hash,
+        }))
+        .then((user) => res.status(201).send({ data: user }))
+        .catch((err) => defineError(err, next));
+    })
+    .catch(() => next(new ServiceUnavailable('Ошибка загрузки файла на Cloudinary')));
 };
 
 module.exports.findUserById = (req, res, next) => {
@@ -71,16 +79,18 @@ module.exports.updateProfile = (req, res, next) => {
 };
 
 module.exports.updateAvatar = (req, res, next) => {
-  const { avatar } = req.body;
-
-  User.findByIdAndUpdate(
-    req.user._id,
-    { $set: { avatar } },
-    { new: true, runValidators: true },
-  )
-    .orFail()
-    .then((user) => res.send({ data: user }))
-    .catch((err) => defineError(err, next));
+  cloudinary.uploader.upload(req.file.path)
+    .then((result) => {
+      User.findByIdAndUpdate(
+        req.user._id,
+        { $set: { avatar: result.secure_url } },
+        { new: true, runValidators: true },
+      )
+        .orFail()
+        .then((user) => res.send({ data: user }))
+        .catch((err) => defineError(err, next));
+    })
+    .catch(() => next(new ServiceUnavailable('Ошибка загрузки файла на Cloudinary')));
 };
 
 module.exports.login = (req, res, next) => {

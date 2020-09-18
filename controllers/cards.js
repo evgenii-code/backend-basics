@@ -1,6 +1,11 @@
+const cloudinary = require('cloudinary').v2;
 const Card = require('../models/card');
 const { defineError } = require('../utils/utils');
 const ForbiddenError = require('../errors/forbidden-err');
+const ServiceUnavailable = require('../errors/service-unavailable');
+const { cloudinaryConfig } = require('../utils/cloudinary-config');
+
+cloudinary.config(cloudinaryConfig);
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -10,34 +15,20 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.createCard = (req, res, next) => {
-  // Функция используется для создания карточки из url картинки
-  const { name, link } = req.body;
-  const { _id: owner } = req.user;
+  cloudinary.uploader.upload(req.file.path)
+    .then((result) => {
+      const { name } = req.body;
+      const { _id: owner } = req.user;
 
-  Card.create({
-    name,
-    link,
-    owner,
-  })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => defineError(err, next));
-};
-
-module.exports.createCardFromFile = (req, res, next) => {
-  // Функция используется для создания карточки из загруженного файла
-  const hostURL = `${req.protocol}://${req.get('host')}/`;
-  const fullPictureURL = hostURL + req.file.path;
-
-  const { name } = req.body;
-  const { _id: owner } = req.user;
-
-  Card.create({
-    name,
-    link: fullPictureURL,
-    owner,
-  })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => defineError(err, next));
+      Card.create({
+        name,
+        link: result.secure_url,
+        owner,
+      })
+        .then((card) => res.send({ data: card }))
+        .catch((err) => defineError(err, next));
+    })
+    .catch(() => next(new ServiceUnavailable('Ошибка загрузки файла на Cloudinary')));
 };
 
 module.exports.deleteCard = (req, res, next) => {

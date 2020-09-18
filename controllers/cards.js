@@ -10,10 +10,32 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.createCard = (req, res, next) => {
+  // Функция используется для создания карточки из url картинки
   const { name, link } = req.body;
   const { _id: owner } = req.user;
 
-  Card.create({ name, link, owner })
+  Card.create({
+    name,
+    link,
+    owner,
+  })
+    .then((card) => res.send({ data: card }))
+    .catch((err) => defineError(err, next));
+};
+
+module.exports.createCardFromFile = (req, res, next) => {
+  // Функция используется для создания карточки из загруженного файла
+  const hostURL = `${req.protocol}://${req.get('host')}/`;
+  const fullPictureURL = hostURL + req.file.path;
+
+  const { name } = req.body;
+  const { _id: owner } = req.user;
+
+  Card.create({
+    name,
+    link: fullPictureURL,
+    owner,
+  })
     .then((card) => res.send({ data: card }))
     .catch((err) => defineError(err, next));
 };

@@ -7,6 +7,7 @@ const { errors } = require('celebrate');
 const { celebrate } = require('celebrate');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const users = require('./routes/users.js');
 const cards = require('./routes/cards.js');
@@ -49,6 +50,7 @@ app.use(bodyParser.json());
 
 app.use(requestLogger);
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.post('/signin', celebrate(loginSchema), login);
 app.post('/signup', celebrate(createUserSchema), createUser);
 app.use('/cards', cards);

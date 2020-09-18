@@ -52,6 +52,13 @@ module.exports.createCardScheme = {
   }),
 };
 
+module.exports.createCardFromFileScheme = {
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+  }).unknown(true),
+  // нет валидации для файла, надо доработать
+};
+
 module.exports.cardIdScheme = {
   params: Joi.object().keys({
     cardId: Joi.string().hex().length(24),

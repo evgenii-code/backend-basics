@@ -15,25 +15,6 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.createCard = (req, res, next) => {
-  // Функция используется для создания карточки из url картинки
-  const { name, link } = req.body;
-  const { _id: owner } = req.user;
-
-  Card.create({
-    name,
-    link,
-    owner,
-  })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => defineError(err, next));
-};
-
-module.exports.createCardFromFile = (req, res, next) => {
-  // Функция используется для создания карточки из загруженного файла
-
-  // const hostURL = `${req.protocol}://${req.get('host')}/`;
-  // const fullPictureURL = hostURL + req.file.path; // путь к локальному файлу
-
   cloudinary.uploader.upload(req.file.path)
     .then((result) => {
       const { name } = req.body;
@@ -41,7 +22,7 @@ module.exports.createCardFromFile = (req, res, next) => {
 
       Card.create({
         name,
-        link: result.secure_url, // или fullPictureURL для ссылки на локальный файл
+        link: result.secure_url,
         owner,
       })
         .then((card) => res.send({ data: card }))

@@ -12,7 +12,6 @@ const {
   getAuthUser,
   findUserById,
   updateProfile,
-  // updateAvatar,
   updateAvatarFromFile,
 } = require('../controllers/users');
 
@@ -20,7 +19,6 @@ const {
 router.get('/', getAuthUser); // get only current authorized user
 router.get('/:userId', celebrate(findUser), findUserById);
 router.patch('/me', celebrate(editUserSchema), updateProfile);
-// router.patch('/me/avatar', celebrate(editAvatarSchema), updateAvatar); // old route for avatar
 router.patch('/me/avatar', upload.single('file'), optimize, updateAvatarFromFile);
 
 module.exports = router;

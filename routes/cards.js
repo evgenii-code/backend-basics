@@ -3,14 +3,12 @@ const { celebrate } = require('celebrate');
 const { upload } = require('../utils/multer-config');
 const optimize = require('../middlewares/optimize');
 const {
-  // createCardScheme,
-  createCardFromFileScheme,
+  createCardScheme,
   cardIdScheme,
 } = require('../utils/validation-schemes');
 const {
   getCards,
-  // createCard,
-  createCardFromFile,
+  createCard,
   deleteCard,
   likeCard,
   dislikeCard,
@@ -21,8 +19,7 @@ const auth = require('../middlewares/auth');
 router.get('/', getCards);
 // router.use(celebrate(authSchema), auth); // no joi validation for cookie
 router.use(auth);
-// router.post('/', celebrate(createCardScheme), createCard);
-router.post('/', upload.single('file'), celebrate(createCardFromFileScheme), optimize, createCardFromFile);
+router.post('/', upload.single('file'), celebrate(createCardScheme), optimize, createCard);
 router.delete('/:cardId', celebrate(cardIdScheme), deleteCard);
 router.put('/:cardId/likes', celebrate(cardIdScheme), likeCard);
 router.delete('/:cardId/likes', celebrate(cardIdScheme), dislikeCard);

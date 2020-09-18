@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-require('dotenv').config();
-
-const { NODE_ENV } = process.env;
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -16,8 +13,6 @@ const cardSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(link) {
-        if (NODE_ENV !== 'production') return true;
-
         return validator.isURL(link);
       },
     },

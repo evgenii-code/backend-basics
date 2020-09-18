@@ -79,21 +79,6 @@ module.exports.updateProfile = (req, res, next) => {
 };
 
 module.exports.updateAvatar = (req, res, next) => {
-  // для обновления аватара по ссылке
-  const { avatar } = req.body;
-
-  User.findByIdAndUpdate(
-    req.user._id,
-    { $set: { avatar } },
-    { new: true, runValidators: true },
-  )
-    .orFail()
-    .then((user) => res.send({ data: user }))
-    .catch((err) => defineError(err, next));
-};
-
-module.exports.updateAvatarFromFile = (req, res, next) => {
-  // для обновления аватара из файла
   cloudinary.uploader.upload(req.file.path)
     .then((result) => {
       User.findByIdAndUpdate(
